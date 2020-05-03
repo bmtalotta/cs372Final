@@ -13,10 +13,8 @@ class Handler {
 };
 
 class AbstractHandler : public Handler {
-
  private:
   Handler *next_handler_;
-
  public:
   AbstractHandler() : next_handler_(nullptr) {
   }
@@ -45,7 +43,7 @@ class PickyHandler : public AbstractHandler {
 class thatGuylHandler : public AbstractHandler {
  public:
   std::string Handle(std::string request) override {
-    if (request == "pineaple") {
+    if (request == "pineapple") {
       return "enlightend thinker: It does belong on Pizza, I want " + request + " on it.\n";
     } else {
       return AbstractHandler::Handle(request);
@@ -62,8 +60,18 @@ class StandardHandler : public AbstractHandler {
     }
   }
 };
+class everythingHandler : public AbstractHandler {
+ public:
+  std::string Handle(std::string request) override {
+    if (request == "combo") {
+      return "angry guy: I'm fine with getting a " + request + " any pizza without pineapple is a good pizza.\n";
+    } else {
+      return AbstractHandler::Handle(request);
+    }
+  }
+};
 void ClientCode(Handler &handler) {
-  std::vector<std::string> food = {"plain", "pineapple", "pepperoni"};
+  std::vector<std::string> food = {"plain", "pineapple", "pepperoni", "combo"};
   for (const std::string &f : food) {
     std::cout << "Client: what kind of pizza should we get? " << "\n";
     const std::string result = handler.Handle(f);
@@ -78,17 +86,16 @@ int main() {
   PickyHandler *picky = new PickyHandler;
   thatGuylHandler *pineappleDude = new thatGuylHandler;
   StandardHandler *bob = new StandardHandler;
-  picky->nextHandle(pineappleDude)->nextHandle(bob);
-
+  everythingHandler *angry =new everythingHandler;
+  picky->nextHandle(pineappleDude)->nextHandle(bob)->nextHandle(angry);
   std::cout << "Chain: all handles\n\n";
   ClientCode(*picky);
   std::cout << "\n";
-  std::cout << "Subchain: just pepperoni handle\n\n";
+  std::cout << "Subchain: just pepperoni and combo handle\n\n";
   ClientCode(*pineappleDude);
-
   delete picky;
   delete pineappleDude;
   delete bob;
-
+  delete angry;
   return 0;
 }
